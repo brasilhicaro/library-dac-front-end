@@ -1,3 +1,4 @@
+import './styles/Book.css'
 
 function Book(){
     return (
@@ -7,15 +8,31 @@ function Book(){
             <form className="form-book">
               <span className="book-form-title">Gerar Livro</span>
               <div className="container-book-form-btn">
-                <span className="book-form-title-input">Nome do Livro</span>
-                <input type="text" className="book-form-input" />
-                <span className="book-form-title-input">Ano de Publicação</span>
-                <input type="text" className="book-form-input" />
-                <span className="book-form-title-input">Editora</span>
-                <input type="text" className="book-form-input" />
-                <span className="book-form-title-input">Autor</span>
-                <input type="text" className="book-form-input" />
+
+                <div className="wrap-input">
+                <input type="text" className="book-form-input book-input" />
+                <span className="book-form-title-input" data-placeholder='Nome do Livro'></span>
+                </div>
+                
+                <div className="wrap-input">
+                  <input type="text" className="book-form-input book-input" />
+                  <span className="book-form-title-input" data-placeholder='Editora'></span>
+                </div>
+
+                <div className="wrap-input">
+                  <input type="text" className="book-form-input book-input" />
+                  <span className="book-form-title-input" data-placeholder='Ano de Publicação'></span>
+                </div>
+
+                <div className="wrap-input">
+                  <input type="text" className="book-form-input book-input" />
+                  <span className="book-form-title-input" data-placeholder='Autor'></span>
+                </div>
+
+                <div className="container-cadastrar-login-form-btn">
                 <button className="book-form-btn"  type="button">Cadastrar Livro</button>
+                </div>    
+                 
               </div>
             </form>
           </div>      
