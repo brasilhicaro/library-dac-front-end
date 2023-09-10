@@ -1,0 +1,26 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+.container-menu {
+    width: 100%;
+    min-width: 100vh;
+    
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    padding: 15px;
+
+    background-attachment: #111;
+}
+
+.wrap-menu{
+    width: 100%;
+}
