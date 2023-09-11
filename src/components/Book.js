@@ -1,19 +1,34 @@
-import './styles/Book.css'
+import './styles/styles.css'
 import '../App.css'
 import { useState } from 'react';
 
-function Book(){
+const Book = ({ onBookSubmit }) => {
 
   const[bookName, setBook] = useState('');
   const[publisher, setPublisher] = useState('');
   const[year, setYear] = useState('');
   const[author, setAuthor] = useState('');
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const bookData= {
+      bookName,
+      publisher,
+      year,
+      author
+  };
+    onBookSubmit(bookData);
+    setBook('');
+    setPublisher('');
+    setYear('');
+    setAuthor('');
+  };
+
     return (
       <div className="container">
         <div className="container-book">
           <div className="wrap-book">
-            <form className="form-book">
+            <form className="form-book" onSubmit={handleSubmit}>
               <span className="book-form-title">Gerar Livro</span>
               <div className="container-book-form-btn">
 
@@ -58,7 +73,7 @@ function Book(){
                 </div>
 
                 <div className="container-cadastrar-login-form-btn">
-                <button className="book-form-btn"  type="button">Cadastrar Livro</button>
+                <button className="book-form-btn"  type="submit">Cadastrar Livro</button>
                 </div>    
                  
               </div>
@@ -67,6 +82,29 @@ function Book(){
         </div>
       </div>
     );
-}
+  };
 
-export default Book;
+    const BookContainer = () => {
+      const onBookSubmit = async (bookData) => {
+        try{
+          const response = await fetch('http://localhost:8080/book', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bookData)
+          });
+          if (response.ok) {
+            console.log('Livro cadastrado com sucesso!');
+          }else{
+            console.log('Erro ao cadastrar livro!');
+          }
+        }catch(error){
+          console.log(error);
+        }
+      };
+      return <Book onBookSubmit={onBookSubmit} />;
+    };
+
+
+export default BookContainer;
