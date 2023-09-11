@@ -64,6 +64,6 @@
     width: 100%;
 }
 
-.book-input:focus + .book-form-title-input::after{
+.book-input:focus + .book-form-title-input::after, .has-value + .book-form-title-input::after{ 
     top: -15px;
 }
