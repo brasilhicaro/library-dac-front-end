@@ -5,7 +5,7 @@
     margin-bottom: 37px;
 }
 
-.book-form-input{
+.book-form-input, .reserve-form-input{
     font-size: 15px;
     color: #fff;
     line-height: 1.2;
@@ -17,7 +17,7 @@
     padding: 0 5px;
 }
 
-.book-form-title-input{
+.book-form-title-input, .reserve-form-title-input{
     position: absolute;
     display: block;
     width: 100%;
@@ -28,7 +28,7 @@
     color: #adadad;
 }
 
-.book-form-title-input::before{
+.book-form-title-input::before, .reserve-form-title-input::before{
     content: "";
     display: block;
     position: absolute;
@@ -40,7 +40,7 @@
     background: #6a7dfe;
 }
 
-.book-form-title-input::after{
+.book-form-title-input::after, .reserve-form-title-input::after{
     font-family: Nunito, sans-serif;
     font-size: 15px;
     color: #999999;
@@ -56,14 +56,16 @@
 }
 
 
-.book-input:focus{
+.book-input:focus, .reserve-input:focus{
     outline: 0;
 }
 
-.book-input:focus + .book-form-title-input::before{
+.book-input:focus + .book-form-title-input::before, .reserve-input:focus + .reserve-form-title-input::before{
     width: 100%;
 }
 
-.book-input:focus + .book-form-title-input::after, .has-value + .book-form-title-input::after{ 
+.book-input:focus + .book-form-title-input::after, .has-value + .book-form-title-input::after,
+ .reserve-input:focus + .reserve-form-title-input::after,
+  .has-value + .reserve-form-title-input::after{ 
     top: -15px;
 }
