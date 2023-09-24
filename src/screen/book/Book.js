@@ -1,5 +1,4 @@
-import './styles/styles.css'
-import '../App.css'
+import './../styles/styles.css'
 import { useState } from 'react';
 
 const Book = ({ onBookSubmit }) => {

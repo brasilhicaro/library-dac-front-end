@@ -1,5 +1,5 @@
-import './styles/styles.css'
-import '../App.css'
+import './../styles/styles.css'
+import './../../geralStyles.css'
 import { useState } from 'react';
 
 const Reserve = ({ onReserveSubmit }) =>{
