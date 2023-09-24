@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react'
 import './App.css'
 import Book from './components/Book'
 import Reserve from './components/Reserve'
+import "bootswatch/dist/cyborg/bootstrap.css";
 function App() {
   
   const [chosePage, setPage] = useState(0)	
@@ -33,12 +34,15 @@ function App() {
           <div className="container-menu">
             <div className="wrap-menu">
               <form className="form-menu">
-                <span className="menu-form-title">Bem vindo!</span>
-                <span className="menu-form-subtitle">Selecione a opção que deseja</span>
-                <div className="container-menu-form-btn">
-                  <button className="menu-form-btn" onClick={()=>LinksPages('?book')} type="button">Cadastrar Livro</button>
-                  <button className="menu-form-btn" onClick={()=>LinksPages('?reserve')} type="button">Cadastrar Reserva</button>
+                <h2>Bem vindo!</h2>
+
+                <form className="form-menu">
+                <h5>Selecione uma opção:</h5>
+                <div class="d-grid gap-2">
+                  <button class="btn btn-lg btn-primary" type="button">Livro</button>
+                  <button class="btn btn-lg btn-primary" type="button">Reserva</button>
                 </div>
+                </form>
               </form>
             </div>      
           </div>
