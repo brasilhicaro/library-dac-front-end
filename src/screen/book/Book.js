@@ -1,109 +1,72 @@
 import './../styles/styles.css'
-import { useState } from 'react';
+import {Component } from 'react';
+import axios from 'axios';
+import BookTable from './../../components/BookTable';
 
-const Book = ({ onBookSubmit }) => {
+class Book extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      books: []
+    };
+  }
+  async componentDidMount() {
+    try {
+      const response = await axios.get('http://localhost:3000/book');
+      const books = response.data.map((book) => ({
+        id: book.id,
+        title: book.title,
+        year: book.year,
+        publisher: book.publisher,
+        author: book.author,
+      }));
+      this.setState({ books });
 
-  const[bookName, setBook] = useState('');
-  const[publisher, setPublisher] = useState('');
-  const[year, setYear] = useState('');
-  const[author, setAuthor] = useState('');
+    }catch (error){
+      console.log("Não consigo buscar a música",error);
+    }
+  }
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const bookData= {
-      bookName,
-      publisher,
-      year,
-      author
-  };
-    onBookSubmit(bookData);
-    setBook('');
-    setPublisher('');
-    setYear('');
-    setAuthor('');
-  };
+  async deleteBook(book) {
+    try{
+      await axios.delete(`http://localhost:3000/book/${book.id}`);
+      this.setState({
+        books: this.state.books.filter((book) => book.id !== book.id),
+      });
+      alert('Livro deletado com sucesso!');
+    }catch (error){
+      console.log("Não consigo deletar a música",error);
+    }
 
+}
+  render() {
     return (
       <div className="container">
-        <div className="container-book">
-          <div className="wrap-book">
-            <form className="form-book" onSubmit={handleSubmit}>
-              <span className="book-form-title">Gerar Livro</span>
-              <div className="container-book-form-btn">
+         <div className="container-book">
+           <div className="wrap-book">
+             <form className="form-book">
+               <span className="book-form-title">Gerar Livro</span>
+               <div className="container-book-form-btn">
+                 <div class="d-grid gap-2">
+                   <button 
+                   class="btn btn-lg btn-primary" 
+                   type="button"
+                   onClick={() => window.location.href = "/createBook"}
+                   >Criar Livro
+                   </button>
+                   <button 
+                   class="btn btn-lg btn-primary" 
+                   type="button"
+                   onClick={() => window.location.href = "/"}
+                   >Voltar</button>
+                 </div>
+               </div>
+                <BookTable books={this.state.books} deleteBook={this.deleteBook} />
+             </form>
+           </div>      
+         </div>
+       </div>
+    )}
+}
 
-                <div className="wrap-input">
-                <input
-                type="text" 
-                className={bookName.length > 0 ? "has-value book-form-input book-input" : "book-form-input"}
-                value={bookName}
-                onChange={(event) => setBook(event.target.value)}
-                />
-                <span className="book-form-title-input" data-placeholder='Nome do Livro'></span>
-                </div>
-                
-                <div className="wrap-input">
-                  <input 
-                  type="text" 
-                  className={publisher.length > 0 ? "has-value book-form-input book-input" : "book-form-input"}
-                  value={publisher}
-                  onChange={(event) => setPublisher(event.target.value)}
-                  />
-                  <span className="book-form-title-input" data-placeholder='Editora'></span>
-                </div>
-
-                <div className="wrap-input">
-                  <input
-                  type="text"
-                  className={year.length > 0 ? "has-value book-form-input book-input" : "book-form-input"}
-                  value={year}
-                  onChange={(event) => setYear(event.target.value)}
-                  />
-                  <span className="book-form-title-input" data-placeholder='Ano de Publicação'></span>
-                </div>
-
-                <div className="wrap-input">
-                  <input 
-                  type="text" 
-                  className={author.length > 0 ? "has-value book-form-input book-input" : "book-form-input"}
-                  value={author}
-                  onChange={(event) => setAuthor(event.target.value)}
-                  />
-                  <span className="book-form-title-input" data-placeholder='Autor'></span>
-                </div>
-
-                <div className="container-cadastrar-login-form-btn">
-                <button className="book-form-btn"  type="submit">Cadastrar Livro</button>
-                </div>    
-                 
-              </div>
-            </form>
-          </div>      
-        </div>
-      </div>
-    );
-  };
-
-    const BookContainer = () => {
-      const onBookSubmit = async (bookData) => {
-        try{
-          const response = await fetch('http://localhost:8080/book', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(bookData)
-          });
-          if (response.ok) {
-            console.log('Livro cadastrado com sucesso!');
-          }else{
-            console.log('Erro ao cadastrar livro!');
-          }
-        }catch(error){
-          console.log(error);
-        }
-      };
-      return <Book onBookSubmit={onBookSubmit} />;
-    };
-
-
-export default BookContainer;
+export default Book;
