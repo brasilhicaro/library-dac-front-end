@@ -11,7 +11,7 @@ class UpdateReserve extends Component {
     }
     update = () => 
     {
-        axios.put(`http://localhost:3000/reserve/${this.props.match.params.id}`, {
+        axios.put(`http://localhost:8080/reserve/${this.props.match.params.id}`, {
             responsible: this.state.responsible,
             loanDate: this.state.loanDate,
             returnDate: this.state.returnDate,

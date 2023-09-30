@@ -11,7 +11,7 @@ class UpdateBook extends Component {
     }
     update = () => 
     {
-        axios.put(`http://localhost:3000/book/${this.props.match.params.id}`, {
+        axios.put(`http://localhost:8080/book/${this.props.match.params.id}`, {
             bookName: this.state.bookName,
             publisher: this.state.publisher,
             year: this.state.year,

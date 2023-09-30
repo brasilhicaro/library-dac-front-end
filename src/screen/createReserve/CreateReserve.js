@@ -11,7 +11,7 @@ class CreateReserve extends Component {
     }
     create = () => 
     {
-        axios.post('http://localhost:3000/reserve', {
+        axios.post('http://localhost:8080/reserve', {
             responsible: this.state.responsible,
             loanDate: this.state.loanDate,
             returnDate: this.state.returnDate,

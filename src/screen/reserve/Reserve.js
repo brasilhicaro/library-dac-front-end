@@ -13,7 +13,7 @@ class Reserve extends Component{
   }
   async componentDidMount() {
     try {
-      const response = await axios.get('http://localhost:3000/reserve');
+      const response = await axios.get('http://localhost:8080/reserve');
       const reserves = response.data.map((reserve) => ({
         id: reserve.id,
         responsible: reserve.responsible,
@@ -28,7 +28,7 @@ class Reserve extends Component{
   }
   async deleteReserve(reserve) {
     try{
-      await axios.delete(`http://localhost:3000/reserve/${reserve.id}`);
+      await axios.delete(`http://localhost:8080/reserve/${reserve.id}`);
       this.setState({
         reserves: this.state.reserves.filter((reserve) => reserve.id !== reserve.id),
       });

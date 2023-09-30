@@ -4,19 +4,22 @@ import axios from 'axios';
 
 class CreateBook extends Component {
   state = {
-    bookName: '',
-    publisher: '',
+    title: '',
     year: '',
+    publisher: '',
     author: ''
   }
   create = () => 
     {
-      axios.post('http://localhost:3000/book', {
-        bookName: this.state.bookName,
-        publisher: this.state.publisher,
+      axios.post('http://localhost:8080/book', {
+        title: this.state.title,
         year: this.state.year,
+        publisher: this.state.publisher,
         author: this.state.author
-    } 
+    }, {
+      headers: {
+          'Content-Type': 'application/json',
+      }}
   ).then(response => 
     {
       console.log(response);
@@ -47,7 +50,7 @@ class CreateBook extends Component {
                 class="form-control" 
                 placeholder="Default input" 
                 id="inputDefault"
-                onChange={(event) => this.setState({bookName: event.target.value})}
+                onChange={(event) => this.setState({title: event.target.value})}
                 />
                 <label for="floatingInput">Titulo</label>
               
