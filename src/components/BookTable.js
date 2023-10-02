@@ -24,7 +24,7 @@ const BookTable = props => {
                         type="button"
                         title="Excluir"
                         className="btn btn-danger"
-                        onClick={e => props.delete(book.id)}
+                        onClick={e => props.delete(book.name)}
                     >
                         <i className="pi pi-trash"></i>
                     </button>

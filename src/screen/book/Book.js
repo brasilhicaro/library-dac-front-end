@@ -10,9 +10,10 @@ class Book extends Component {
       books: []
     };
   }
+
   async componentDidMount() {
     try {
-      const response = await axios.get('http://localhost:3000/book');
+      const response = await axios.get('http://localhost:8080/book/books');
       const books = response.data.map((book) => ({
         id: book.id,
         title: book.title,
@@ -29,7 +30,7 @@ class Book extends Component {
 
   async deleteBook(book) {
     try{
-      await axios.delete(`http://localhost:3000/book/${book.id}`);
+      await axios.delete(`http://localhost:8080/book/${book.id}`);
       this.setState({
         books: this.state.books.filter((book) => book.id !== book.id),
       });
@@ -37,8 +38,8 @@ class Book extends Component {
     }catch (error){
       console.log("Não consigo deletar a música",error);
     }
+  }
 
-}
   render() {
     return (
       <div className="container">
@@ -50,8 +51,8 @@ class Book extends Component {
                  <div class="d-grid gap-2">
                    <button 
                    class="btn btn-lg btn-primary" 
-                   type="button"
                    onClick={() => window.location.href = "/createBook"}
+                   type="button"
                    >Criar Livro
                    </button>
                    <button 
@@ -66,7 +67,8 @@ class Book extends Component {
            </div>      
          </div>
        </div>
-    )}
+    );
+  }
 }
 
-export default Book;
+export default Book; 

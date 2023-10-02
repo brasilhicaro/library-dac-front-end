@@ -4,6 +4,7 @@ import axios from 'axios';
 
 class CreateReserve extends Component {
     state = {
+        id: -1,
         responsible: '',
         loanDate: '',
         returnDate: '',
@@ -12,6 +13,7 @@ class CreateReserve extends Component {
     create = () => 
     {
         axios.post('http://localhost:8080/reserve', {
+            id: this.state.id,
             responsible: this.state.responsible,
             loanDate: this.state.loanDate,
             returnDate: this.state.returnDate,

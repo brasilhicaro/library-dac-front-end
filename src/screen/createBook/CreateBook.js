@@ -1,9 +1,11 @@
 import './../styles/styles.css'
 import {React , Component } from 'react';
 import axios from 'axios';
+import { Messages } from 'primereact/messages';
 
 class CreateBook extends Component {
   state = {
+    id: -1,
     title: '',
     year: '',
     publisher: '',
@@ -12,6 +14,7 @@ class CreateBook extends Component {
   create = () => 
     {
       axios.post('http://localhost:8080/book', {
+        id: this.state.id,
         title: this.state.title,
         year: this.state.year,
         publisher: this.state.publisher,
@@ -23,9 +26,12 @@ class CreateBook extends Component {
   ).then(response => 
     {
       console.log(response);
+
+      window.location.href = "/book";
     }
   ).catch(error =>
     {
+      msg.{ sticky: true, severity: 'error', summary: 'Error', detail: erro, closable: true }
       console.log(error);
     }
   );
