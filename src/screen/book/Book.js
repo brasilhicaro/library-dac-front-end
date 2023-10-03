@@ -1,6 +1,6 @@
-import './../styles/styles.css'
-import {Component } from 'react';
+import React, { Component, useRef } from 'react';
 import axios from 'axios';
+import { Messages } from 'primereact/messages';
 import BookTable from './../../components/BookTable';
 
 class Book extends Component {
@@ -9,6 +9,8 @@ class Book extends Component {
     this.state = {
       books: []
     };
+
+    this.messagesRef = useRef(null);
   }
 
   async componentDidMount() {
@@ -22,53 +24,69 @@ class Book extends Component {
         author: book.author,
       }));
       this.setState({ books });
-
-    }catch (error){
-      console.log("Não consigo buscar a música",error);
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  async deleteBook(book) {
-    try{
+  edit = (bookId) => {
+    window.location.href = `/editBook/:${bookId}`;
+  };
+
+  deleteBook = async (book) => {
+    try {
       await axios.delete(`http://localhost:8080/book/${book.id}`);
       this.setState({
-        books: this.state.books.filter((book) => book.id !== book.id),
+        books: this.state.books.filter((b) => b.id !== book.id),
       });
-      alert('Livro deletado com sucesso!');
-    }catch (error){
-      console.log("Não consigo deletar a música",error);
+      this.showNotification('success', 'Livro deletado com sucesso!');
+    } catch (error) {
+      console.error(error);
+      this.showNotification('error', 'Erro ao deletar o livro. Por favor, tente novamente mais tarde.');
     }
-  }
+  };
+
+  showNotification = (severity, summary) => {
+    this.messagesRef.current.show({
+      severity: severity,
+      summary: summary
+    });
+  };
 
   render() {
     return (
       <div className="container">
-         <div className="container-book">
-           <div className="wrap-book">
-             <form className="form-book">
-               <span className="book-form-title">Gerar Livro</span>
-               <div className="container-book-form-btn">
-                 <div class="d-grid gap-2">
-                   <button 
-                   class="btn btn-lg btn-primary" 
-                   onClick={() => window.location.href = "/createBook"}
-                   type="button"
-                   >Criar Livro
-                   </button>
-                   <button 
-                   class="btn btn-lg btn-primary" 
-                   type="button"
-                   onClick={() => window.location.href = "/"}
-                   >Voltar</button>
-                 </div>
-               </div>
-                <BookTable books={this.state.books} deleteBook={this.deleteBook} />
-             </form>
-           </div>      
-         </div>
-       </div>
+        <div className="container-book">
+          <div className="wrap-book">
+            <form className="form-book">
+              <span className="book-form-title">Gerar Livro</span>
+              <div className="container-book-form-btn">
+                <div className="d-grid gap-2">
+                  <button
+                    className="btn btn-lg btn-primary"
+                    onClick={() => window.location.href = "/createBook"}
+                    type="button"
+                  >
+                    Criar Livro
+                  </button>
+                  <button
+                    className="btn btn-lg btn-primary"
+                    type="button"
+                    onClick={() => window.location.href = "/"}
+                  >
+                    Voltar
+                  </button>
+                </div>
+              </div>
+              <BookTable books={this.state.books} deleteBook={this.deleteBook} edit={this.edit} />
+            </form>
+          </div>
+        </div>
+        {/* Componente Messages do PrimeReact para exibir notificações */}
+        <Messages ref={this.messagesRef} />
+      </div>
     );
   }
 }
 
-export default Book; 
+export default Book;

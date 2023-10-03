@@ -1,6 +1,7 @@
 import './../styles/styles.css'
 import {React , Component } from 'react';
 import axios from 'axios';
+import Message from './../../components/messages/messages';
 
 class CreateReserve extends Component {
     state = {
@@ -21,10 +22,13 @@ class CreateReserve extends Component {
         } 
         ).then(response => 
             {
+                Message.show("Reserva criada com sucesso!", "success");
                 console.log(response);
+                window.location.href = "/reserve";
             }
         ).catch(error =>
             {
+                Message.show("Erro ao criar reserva!", "error");
                 console.log(error);
             }
         );

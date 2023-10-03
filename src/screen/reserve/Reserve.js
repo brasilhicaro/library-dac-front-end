@@ -1,6 +1,7 @@
 import './../styles/styles.css'
 import './../../geralStyles.css'
 import { Component } from 'react';
+import Message from './../../components/messages/messages';
 import axios from 'axios';
 import ReserveTable from '../../components/ReserveTable';
 
@@ -23,6 +24,7 @@ class Reserve extends Component{
       }));
       this.setState({ reserves });
     }catch (error){
+      Message.showError("Erro ao buscar reservas", "Erro");
       console.log("Não consigo buscar a música",error);
     }
   }
@@ -32,8 +34,11 @@ class Reserve extends Component{
       this.setState({
         reserves: this.state.reserves.filter((reserve) => reserve.id !== reserve.id),
       });
+      Message.showSuccess("Reserva deletada com sucesso!", reserve.title);
       alert('Reserva deletada com sucesso!');
+
     } catch (error){
+      Message.showError("Erro ao deletar reserva",reserve.title);
       console.log("Não consigo deletar a música",error);
     }
   }

@@ -1,9 +1,11 @@
 import './../styles/styles.css'
 import {React , Component } from 'react';
 import axios from 'axios';
+import Message from './../../components/messages/messages';
 
 class UpdateReserve extends Component {
     state = {
+        id: -1,
         responsible: '',
         loanDate: '',
         returnDate: '',
@@ -12,6 +14,7 @@ class UpdateReserve extends Component {
     update = () => 
     {
         axios.put(`http://localhost:8080/reserve/${this.props.match.params.id}`, {
+            id: this.state.id,
             responsible: this.state.responsible,
             loanDate: this.state.loanDate,
             returnDate: this.state.returnDate,
@@ -19,10 +22,13 @@ class UpdateReserve extends Component {
         }
         ).then(response => 
             {
+                Message.showSuccess("Reserva atualizada com sucesso",this.state.responsible);
                 console.log(response);
+                window.location.href = "/reserve";
             }
         ).catch(error =>
             {
+                Message.showError("Erro ao atualizar reserva",this.state.responsible);
                 console.log(error);
             }
         );
