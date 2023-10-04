@@ -1,132 +1,191 @@
-import './../styles/styles.css'
-import {React , Component } from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
-import Message from './../../components/messages/messages';
 
 class UpdateBook extends Component {
-  state = {
-    id: -1,
-    bookName: '',
-    publisher: '',
-    year: '',
-    author: ''
-    }
-    update = () => 
-    {
-        axios.put(`http://localhost:8080/book/${this.props.match.params.id}`, {
-            id: this.state.id,
-            bookName: this.state.bookName,
-            publisher: this.state.publisher,
-            year: this.state.year,
-            author: this.state.author
-        }
-        ).then(response => 
-            {
-                alert(response);
-                console.log(response);
-                window.location.href = "/book";
-            }
-        ).catch(error =>
-            {
-                console.log(error);
-            }
-        );
-    }
-    cancel = () => 
-    {
-        window.location.href = "/book";
-    }
-    setValues = async () => {
-        await axios.get(`http://localhost:8080/book/${this.state.id}`)
-        .then(response => {
-            this.setState({
-                id: response.data.id,
-                bookName: response.data.bookName,
-                publisher: response.data.publisher,
-                year: response.data.year,
-                author: response.data.author
-            }
-            );
-        }).catch(error => {
-                console.log(error);
-            }
-        );
-    }
-    render(){
-        return (
-            <div className="container">
-            <div className="container-book">
-            <div className="wrap-book">
-                <form className="form-book">
-                <span className="book-form-title">Atualizar Livro</span>
-                <div className="container-book-form-btn">
-                    
-                <div class="wrap-input">
-                <div class="form-floating">
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    placeholder="Default input" 
-                    id="inputDefault"
-                    value={this.state.bookName}
-                    onChange={(event) => this.setState({bookName: event.target.value})}
-                    />
-                    <label for="floatingInput">Titulo</label>
-                
-                </div>
-                </div>
-                <div class="wrap-input">
-                    <div class="form-floating">
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    placeholder="Default input" 
-                    value={this.state.year}
-                    id="inputDefault"
-                    onChange={(event) => this.setState({year: event.target.value})}
-                    />
-                    <label for="floatingInput">Ano</label>
-                    </div>
-                </div>
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: -1,
+      bookData: null,
+      notification: null,
+    };
+  }
 
-                <div class="wrap-input">
-                    <div class="form-floating">
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    placeholder="Default input"
-                    value={this.state.publisher}
-                    id="inputDefault"
-                    onChange={(event) => this.setState({publisher: event.target.value})}
-                    />
-                    <label for="floatingInput">Editora</label>
-                    </div>
-                    </div>
-                    
-                    <div class="wrap-input">
-                    <div class="form-floating">
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    placeholder="Default input" 
-                    id="inputDefault"
-                    value={this.state.author}
-                    onChange={(event) => this.setState({author: event.target.value})}
-                    />
-                    <label for="floatingInput">Autor</label>
-                    </div>
-                    </div>
-                    <div class="d-grid gap-2">
-                    <button onClick={this.update} class="btn btn-lg btn-primary" type="button">Salvar</button>
-                    <button onClick={this.cancel} class="btn btn-lg btn-primary" type="button">Cancelar</button>
-                    </div>
-                </div>
-                </form>
-            </div>
-            </div>
-        </div>      
-        )
+  componentDidMount() {
+    const id = window.location.pathname.split('/').pop().replace(':', '');
+
+    if (id) {
+      this.setState({ id }, () => {
+        this.loadBookData();
+      });
     }
+  }
+
+  loadBookData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/book/find/${this.state.id}`);
+      const bookData = response.data;
+
+      this.setState({ bookData });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  update = async () => {
+    const { id, bookData } = this.state;
+
+    // Verificar se o campo Título não está vazio
+    if (!bookData.title) {
+      this.showNotification('error', 'O campo Título é obrigatório.');
+      return;
+    }
+  
+    // Verificar se o campo Editora não está vazio
+    if (!bookData.publisher) {
+      this.showNotification('error', 'O campo Editora é obrigatório.');
+      return;
+    }
+  
+    // Verificar se o campo Ano é um número válido
+    const yearAsNumber = parseInt(bookData.year, 10);
+    if (isNaN(yearAsNumber) || yearAsNumber <= 0) {
+      this.showNotification('error', 'Digite um ano válido.');
+      return;
+    }
+  
+    try {
+      const response = await axios.put(`http://localhost:8080/book/${this.state.id}`, {
+        id,
+        title: bookData.title,
+        publisher: bookData.publisher,
+        year: yearAsNumber, // Convertido para número
+        author: bookData.author,
+      });
+  
+      if (response.status === 200) {
+        this.showNotification('success', 'Livro atualizado com sucesso!');
+        setTimeout(() => {
+          window.location.href = '/book';
+        }, 1000); // Redireciona após 1 segundo
+      } else {
+        this.showNotification('error', 'Erro ao atualizar o livro.');
+      }
+    } catch (error) {
+      console.error(error);
+      this.showNotification('error', 'Erro ao atualizar o livro.');
+    }
+  };
+
+  showNotification = (severity, message) => {
+    this.setState({
+      notification: { severity, message },
+    });
+  };
+
+  render() {
+    const { bookData, notification } = this.state;
+
+    return (
+      <div className="container">
+        {notification && (
+          <div className={`alert alert-${notification.severity}`} role="alert">
+            {notification.message}
+          </div>
+        )}
+
+        <div className="container-book">
+          <div className="wrap-book">
+            <form className="form-book">
+              <span className="book-form-title">Atualizar Livro</span>
+              {bookData && (
+                <div className="book-details">
+                  <div className="form-group">
+                    <label htmlFor="title">Título:</label> 
+                    <input
+                      type="text"
+                      id="title"
+                      name="title" 
+                      value={bookData.title}
+                      onChange={(e) =>
+                        this.setState({
+                          bookData: { ...bookData, title: e.target.value }, // Alterado de bookName para title
+                        })
+                      }
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="publisher">Editora:</label>
+                    <input
+                      type="text"
+                      id="publisher"
+                      name="publisher"
+                      value={bookData.publisher}
+                      onChange={(e) =>
+                        this.setState({
+                          bookData: { ...bookData, publisher: e.target.value },
+                        })
+                      }
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="year">Ano:</label>
+                    <input
+                      type="text"
+                      id="year"
+                      name="year"
+                      value={bookData.year}
+                      onChange={(e) =>
+                        this.setState({
+                          bookData: { ...bookData, year: e.target.value },
+                        })
+                      }
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="author">Autor:</label>
+                    <input
+                      type="text"
+                      id="author"
+                      name="author"
+                      value={bookData.author}
+                      onChange={(e) =>
+                        this.setState({
+                          bookData: { ...bookData, author: e.target.value },
+                        })
+                      }
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="container-book-form-btn">
+                <div className="d-grid gap-2">
+                  <button
+                    onClick={this.update}
+                    className="btn btn-lg btn-primary"
+                    type="button"
+                  >
+                    Salvar
+                  </button>
+                  <button
+                    onClick={() => window.location.href = '/book'}
+                    className="btn btn-lg btn-primary"
+                    type="button"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default UpdateBook;

@@ -31,7 +31,9 @@ const CreateBook = () => {
       .then((response) => {
         console.log(response);
         showNotification('success', 'Livro criado com sucesso!');
-        window.location.href = '/book';
+        setTimeout(() => {
+          window.location.href = '/book';
+        }, 1000); 
       })
       .catch((error) => {
         console.error(error);

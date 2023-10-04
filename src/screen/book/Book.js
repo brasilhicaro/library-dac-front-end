@@ -1,4 +1,4 @@
-import React, { Component, useRef } from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 import { Messages } from 'primereact/messages';
 import BookTable from './../../components/BookTable';
@@ -7,10 +7,10 @@ class Book extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      books: []
+      books: [],
     };
 
-    this.messagesRef = useRef(null);
+    this.messagesRef = React.createRef(null);
   }
 
   async componentDidMount() {
@@ -26,36 +26,49 @@ class Book extends Component {
       this.setState({ books });
     } catch (error) {
       console.log(error);
+      this.showNotification(
+        'error',
+        'Erro ao carregar os livros. Por favor, tente novamente mais tarde.'
+      );
     }
   }
 
   edit = (bookId) => {
     window.location.href = `/editBook/:${bookId}`;
   };
-
   deleteBook = async (book) => {
+    const confirmed = window.confirm(`Deseja excluir o livro: "${book.title}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
     try {
       await axios.delete(`http://localhost:8080/book/${book.id}`);
-      this.setState({
-        books: this.state.books.filter((b) => b.id !== book.id),
-      });
-      this.showNotification('success', 'Livro deletado com sucesso!');
-    } catch (error) {
+      const updatedBooks = this.state.books.filter((b) => b.id !== book.id);
+      this.setState({ books: updatedBooks }, () => {
+        this.showNotification('success', 'Livro deletado com sucesso!');
+    });
+  } catch (error) {
       console.error(error);
-      this.showNotification('error', 'Erro ao deletar o livro. Por favor, tente novamente mais tarde.');
+      this.showNotification(
+        'error',
+        'Erro ao deletar o livro. Por favor, tente novamente mais tarde.'
+      );
     }
   };
 
   showNotification = (severity, summary) => {
     this.messagesRef.current.show({
       severity: severity,
-      summary: summary
+      summary: summary,
     });
   };
 
   render() {
     return (
       <div className="container">
+        <Messages ref={this.messagesRef} />
         <div className="container-book">
           <div className="wrap-book">
             <form className="form-book">
@@ -82,8 +95,6 @@ class Book extends Component {
             </form>
           </div>
         </div>
-        {/* Componente Messages do PrimeReact para exibir notificações */}
-        <Messages ref={this.messagesRef} />
       </div>
     );
   }
