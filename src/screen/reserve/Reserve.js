@@ -1,20 +1,21 @@
 import './../styles/styles.css'
 import './../../geralStyles.css'
-import { Component } from 'react';
-import Message from './../../components/messages/messages';
+import React, { Component } from 'react';
 import axios from 'axios';
 import ReserveTable from '../../components/ReserveTable';
 
-class Reserve extends Component{
+class Reserve extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      reserves: []
+      reserves: [],
+      notification: null,
     };
   }
+
   async componentDidMount() {
     try {
-      const response = await axios.get('http://localhost:8080/reserve');
+      const response = await axios.get('http://localhost:8080/reserve/reserves');
       const reserves = response.data.map((reserve) => ({
         id: reserve.id,
         responsible: reserve.responsible,
@@ -23,53 +24,72 @@ class Reserve extends Component{
         bookCode: reserve.bookCode,
       }));
       this.setState({ reserves });
-    }catch (error){
-      Message.showError("Erro ao buscar reservas", "Erro");
-      console.log("Não consigo buscar a música",error);
+    } catch (error) {
+      this.showNotification('error', 'Erro ao buscar reservas');
+      console.log('Não consigo buscar as reservas', error);
     }
   }
+
   async deleteReserve(reserve) {
-    try{
+    try {
       await axios.delete(`http://localhost:8080/reserve/${reserve.id}`);
       this.setState({
-        reserves: this.state.reserves.filter((reserve) => reserve.id !== reserve.id),
+        reserves: this.state.reserves.filter((r) => r.id !== reserve.id),
       });
-      Message.showSuccess("Reserva deletada com sucesso!", reserve.title);
-      alert('Reserva deletada com sucesso!');
-
-    } catch (error){
-      Message.showError("Erro ao deletar reserva",reserve.title);
-      console.log("Não consigo deletar a música",error);
+      this.showNotification('success', 'Reserva deletada com sucesso!');
+    } catch (error) {
+      this.showNotification('error', 'Erro ao deletar reserva');
+      console.log('Não consigo deletar a reserva', error);
     }
   }
+
+  showNotification = (severity, message) => {
+    this.setState({
+      notification: { severity, message },
+    });
+  };
+
   render() {
+    const { reserves, notification } = this.state;
+
     return (
-    <div className="container">
-      <div className="container-reserve">
-        <div className="wrap-reserve">
-          <form className="form-reserve">
-            <span className="reserve-form-title">Menu de Reserva</span>
-            <div className="container-reserve-form-btn">
-              <div class="d-grid gap-2">
-                <button 
-                class="btn btn-lg btn-primary" 
-                type="button"
-                onClick={() => window.location.href = "/createReserve"}
-                >Criar Reserva
-                </button>
-                <button 
-                class="btn btn-lg btn-primary" 
-                type="button"
-                onClick={() => window.location.href = "/"}
-                >Voltar</button>
+      <div className="container">
+        {/* Renderize a notificação aqui */}
+        {notification && (
+          <div className={`alert alert-${notification.severity}`} role="alert">
+            {notification.message}
+          </div>
+        )}
+
+        <div className="container-reserve">
+          <div className="wrap-reserve">
+            <form className="form-reserve">
+              <span className="reserve-form-title">Menu de Reserva</span>
+              <div className="container-reserve-form-btn">
+                <div className="d-grid gap-2">
+                  <button
+                    className="btn btn-lg btn-primary"
+                    type="button"
+                    onClick={() => window.location.href = "/createReserve"}
+                  >
+                    Criar Reserva
+                  </button>
+                  <button
+                    className="btn btn-lg btn-primary"
+                    type="button"
+                    onClick={() => window.location.href = "/"}
+                  >
+                    Voltar
+                  </button>
+                </div>
               </div>
-            </div>
-            <ReserveTable reserves={this.state.reserves} deleteReserve={this.deteleReserve} />
-          </form>
-        </div>      
+              <ReserveTable reserves={reserves} deleteReserve={(reserve) => this.deleteReserve(reserve)} />
+            </form>
+          </div>
+        </div>
       </div>
-    </div>
-  )}
+    );
+  }
 }
 
 export default Reserve;
