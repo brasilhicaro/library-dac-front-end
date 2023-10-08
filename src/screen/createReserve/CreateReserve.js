@@ -1,40 +1,47 @@
-import './../styles/styles.css';
 import React, { Component } from 'react';
 import axios from 'axios';
 
 class CreateReserve extends Component {
   state = {
-    id: -1,
+    id: 0,
     responsible: '',
-    loanDate: '',
-    returnDate: '',
-    bookCode: '',
+    loan: '',
+    devolution: '',
+    bookID: '',
     notification: null,
   };
 
   create = () => {
-    const { responsible, loanDate, returnDate, bookCode } = this.state;
+    const { responsible, loan, devolution, bookID } = this.state;
+    const confirmed = window.confirm(`Deseja criar a reserva: "${responsible}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
 
-    // Verifica se todos os campos obrigatórios estão preenchidos
-    if (!responsible || !loanDate || !returnDate || !bookCode) {
+    if (!responsible || !loan || !devolution || !bookID) {
       this.showNotification('error', 'Preencha todos os campos obrigatórios.');
       return;
     }
+
+    const loanInMilliseconds = new Date(loan).getTime();
+    const devolutionInMilliseconds = new Date(devolution).getTime();
 
     axios
       .post('http://localhost:8080/reserve', {
         id: this.state.id,
         responsible,
-        loanDate,
-        returnDate,
-        bookCode,
+        loan: loanInMilliseconds,
+        devolution: devolutionInMilliseconds,
+        bookID,
       })
       .then((response) => {
         this.showNotification('success', 'Reserva criada com sucesso!');
         console.log(response);
         setTimeout(() => {
           window.location.href = '/reserve';
-        }, 1000); // Redireciona após 1 segundo
+        }, 1000);
       })
       .catch((error) => {
         this.showNotification('error', 'Erro ao criar reserva!');
@@ -57,7 +64,6 @@ class CreateReserve extends Component {
 
     return (
       <div className="container">
-        {/* Renderize a notificação aqui */}
         {notification && (
           <div className={`alert alert-${notification.severity}`} role="alert">
             {notification.message}
@@ -69,75 +75,77 @@ class CreateReserve extends Component {
             <form className="form-reserve">
               <span className="reserve-form-title">Gerar Reserva</span>
               <div className="container-reserve-form-btn">
-                <div class="wrap-input">
-                  <div class="form-floating">
+                <div className="wrap-input">
+                  <div className="form-floating">
                     <input
                       type="text"
-                      class="form-control"
-                      placeholder="Default input"
-                      id="inputDefault"
+                      className="form-control"
+                      placeholder="Responsável"
+                      id="inputResponsible"
                       onChange={(event) =>
                         this.setState({ responsible: event.target.value })
                       }
                     />
-                    <label for="floatingInput">Responsável</label>
+                    <label htmlFor="inputResponsible">Responsável</label>
                   </div>
                 </div>
-                <div class="wrap-input">
-                  <div class="form-floating">
+                <div className="wrap-input">
+                  <div className="form-floating">
                     <input
                       type="date"
-                      class="form-control"
-                      placeholder="Default input"
-                      id="inputDefault"
+                      className="form-control"
+                      placeholder="Data de Empréstimo"
+                      id="inputLoan"
                       onChange={(event) =>
-                        this.setState({ loanDate: event.target.value })
+                        this.setState({ loan: event.target.value })
                       }
                     />
-                    <label for="floatingInput">Pegou</label>
+                    <label htmlFor="inputLoan">Data de Empréstimo</label>
                   </div>
                 </div>
 
-                <div class="wrap-input">
-                  <div class="form-floating">
+                <div className="wrap-input">
+                  <div className="form-floating">
                     <input
                       type="date"
-                      class="form-control"
-                      placeholder="Default input"
-                      id="inputDefault"
+                      className="form-control"
+                      placeholder="Data de Devolução"
+                      id="inputDevolution"
                       onChange={(event) =>
-                        this.setState({ returnDate: event.target.value })
+                        this.setState({ devolution: event.target.value })
                       }
                     />
-                    <label for="floatingInput">Devolverá</label>
+                    <label htmlFor="inputDevolution">
+                      Data de Devolução
+                    </label>
                   </div>
                 </div>
 
-                <div class="wrap-input">
-                  <div class="form-floating">
+                <div className="wrap-input">
+                  <div className="form-floating">
                     <input
                       type="text"
-                      class="form-control"
-                      placeholder="Default input"
-                      id="inputDefault"
+                      className="form-control"
+                      placeholder="Código do Livro"
+                      id="inputBookID"
                       onChange={(event) =>
-                        this.setState({ bookCode: event.target.value })
+                        this.setState({ bookID: event.target.value })
                       }
                     />
-                    <label for="floatingInput">Código do Livro</label>
+                    <label htmlFor="inputBookID">Código do Livro</label>
                   </div>
                 </div>
-                <div class="d-grid gap-2">
+                <div className="d-grid gap-2">
                   <button
                     onClick={this.create}
-                    class="btn btn-lg btn-primary"
+                    className="btn btn-lg btn-primary"
                     type="button"
                   >
                     Salvar
                   </button>
                   <button
                     onClick={this.cancel}
-                    class="btn btn-lg btn-primary"
+                    className="btn btn-lg btn-primary"
                     type="button"
                   >
                     Cancelar

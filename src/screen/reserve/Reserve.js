@@ -19,9 +19,9 @@ class Reserve extends Component {
       const reserves = response.data.map((reserve) => ({
         id: reserve.id,
         responsible: reserve.responsible,
-        loanDate: reserve.loanDate,
-        returnDate: reserve.returnDate,
-        bookCode: reserve.bookCode,
+        loan: this.formatDate(reserve.loan),
+        devolution: this.formatDate(reserve.devolution),
+        bookID: reserve.bookID,
       }));
       this.setState({ reserves });
     } catch (error) {
@@ -30,7 +30,32 @@ class Reserve extends Component {
     }
   }
 
-  async deleteReserve(reserve) {
+  edit = (reserveId) => {
+    const confirmed = window.confirm(`Deseja editar a reserva: "${reserveId}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
+    window.location.href = `/editReserve/:${reserveId}`;
+  };
+
+
+  formatDate = (dateInMilliseconds) => {
+    const date = new Date(dateInMilliseconds);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  deleteReserve = async (reserve) => {
+    const confirmed = window.confirm(`Deseja excluir a reserva: "${reserve.resposible}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
     try {
       await axios.delete(`http://localhost:8080/reserve/${reserve.id}`);
       this.setState({
@@ -54,7 +79,6 @@ class Reserve extends Component {
 
     return (
       <div className="container">
-        {/* Renderize a notificação aqui */}
         {notification && (
           <div className={`alert alert-${notification.severity}`} role="alert">
             {notification.message}
@@ -83,7 +107,7 @@ class Reserve extends Component {
                   </button>
                 </div>
               </div>
-              <ReserveTable reserves={reserves} deleteReserve={(reserve) => this.deleteReserve(reserve)} />
+              <ReserveTable reserves={reserves} deleteReserve={(reserve) => this.deleteReserve(reserve) }  edit={(reserveId) => this.edit(reserveId)} />
             </form>
           </div>
         </div>

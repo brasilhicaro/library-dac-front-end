@@ -14,7 +14,12 @@ const CreateBook = () => {
   const messagesRef = useRef(null);
 
   const create = () => {
-    // Verificar se todos os campos estão preenchidos
+    const confirmed = window.confirm(`Deseja criar o livro: "${formData.title}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
     if (!formData.title || !formData.year || !formData.publisher || !formData.author) {
       showNotification('error', 'Por favor, preencha todos os campos.');
       return;

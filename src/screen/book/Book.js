@@ -34,6 +34,12 @@ class Book extends Component {
   }
 
   edit = (bookId) => {
+    const confirmed = window.confirm(`Deseja editar a reserva: "${bookId}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
     window.location.href = `/editBook/:${bookId}`;
   };
   deleteBook = async (book) => {
@@ -91,10 +97,10 @@ class Book extends Component {
                   </button>
                 </div>
               </div>
-              <BookTable books={this.state.books} deleteBook={this.deleteBook} edit={this.edit} />
             </form>
           </div>
         </div>
+        <BookTable books={this.state.books} deleteBook={this.deleteBook} edit={this.edit} />
       </div>
     );
   }

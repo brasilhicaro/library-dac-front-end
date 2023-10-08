@@ -34,20 +34,24 @@ class UpdateBook extends Component {
 
   update = async () => {
     const { id, bookData } = this.state;
+    
+    const confirmed = window.confirm(`Deseja editar o Livro: "${bookData.title}"?`);
+  
+    if (!confirmed) {
+      return;
+    }
+  
 
-    // Verificar se o campo Título não está vazio
     if (!bookData.title) {
       this.showNotification('error', 'O campo Título é obrigatório.');
       return;
     }
   
-    // Verificar se o campo Editora não está vazio
     if (!bookData.publisher) {
       this.showNotification('error', 'O campo Editora é obrigatório.');
       return;
     }
   
-    // Verificar se o campo Ano é um número válido
     const yearAsNumber = parseInt(bookData.year, 10);
     if (isNaN(yearAsNumber) || yearAsNumber <= 0) {
       this.showNotification('error', 'Digite um ano válido.');
@@ -67,7 +71,7 @@ class UpdateBook extends Component {
         this.showNotification('success', 'Livro atualizado com sucesso!');
         setTimeout(() => {
           window.location.href = '/book';
-        }, 1000); // Redireciona após 1 segundo
+        }, 1000); 
       } else {
         this.showNotification('error', 'Erro ao atualizar o livro.');
       }
@@ -109,7 +113,7 @@ class UpdateBook extends Component {
                       value={bookData.title}
                       onChange={(e) =>
                         this.setState({
-                          bookData: { ...bookData, title: e.target.value }, // Alterado de bookName para title
+                          bookData: { ...bookData, title: e.target.value }, 
                         })
                       }
                       className="form-control"
